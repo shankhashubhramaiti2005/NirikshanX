@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+backend/venv/
+ENV/
+env/
+.venv
+
+# SQLite database
+*.db
+*.sqlite3
+nirikshanx.db
+
+# Dynamic uploads and scratch
+uploads/
+backend/uploads/
+scratch/
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Environment variables
+.env
+.env.local
