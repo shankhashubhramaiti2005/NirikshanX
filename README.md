@@ -2,7 +2,7 @@
 
 **AI-Powered Packaged Commodity Compliance & Verification System**
 
-NirikshanX is an advanced AI system designed for verifying packaged commodity labels according to Legal Metrology guidelines and regulatory compliance standards.
+NirikshanX is an advanced AI  system designed for verifying packaged commodity labels according to Legal Metrology guidelines and regulatory compliance standards.
 
 ## 🚀 Features
 
