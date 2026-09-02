@@ -1,0 +1,2213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NirikshanX — AI Compliance System</title>
+<meta name="description" content="NirikshanX: AI-Powered Packaged Commodity Compliance System for Legal Metrology Rules 2011">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+/* ═══════════════════════════════════════════════ DESIGN TOKENS */
+:root {
+  --bg-base:      #060810;
+  --bg-surface:   #0d1117;
+  --bg-elevated:  #161b27;
+  --bg-card:      #1c2233;
+  --bg-input:     #111827;
+  --border:       rgba(255,255,255,.07);
+  --border-focus: #4f6ef7;
+  --accent:       #4f6ef7;
+  --accent-glow:  rgba(79,110,247,.25);
+  --accent-light: #7c8ffa;
+  --accent-dim:   rgba(79,110,247,.12);
+  --green:        #10b981;
+  --green-dim:    rgba(16,185,129,.12);
+  --red:          #ef4444;
+  --red-dim:      rgba(239,68,68,.12);
+  --orange:       #f59e0b;
+  --orange-dim:   rgba(245,158,11,.12);
+  --yellow:       #eab308;
+  --yellow-dim:   rgba(234,179,8,.12);
+  --purple:       #a855f7;
+  --purple-dim:   rgba(168,85,247,.12);
+  --text-primary: #f1f5f9;
+  --text-sec:     #94a3b8;
+  --text-muted:   #475569;
+  --radius-sm:    6px;
+  --radius:       10px;
+  --radius-lg:    16px;
+  --radius-xl:    24px;
+  --shadow:       0 4px 24px rgba(0,0,0,.4);
+  --shadow-lg:    0 8px 48px rgba(0,0,0,.6);
+  --sidebar-w:    256px;
+  --transition:   .18s ease;
+}
+/* ═══════════════════════════════════════════════ RESET */
+*,::before,::after { box-sizing:border-box; margin:0; padding:0; }
+html { height:100%; }
+body { font-family:'Inter',system-ui,sans-serif; background:var(--bg-base); color:var(--text-primary); min-height:100vh; line-height:1.5; -webkit-font-smoothing:antialiased; }
+button { font-family:inherit; cursor:pointer; }
+input,select,textarea { font-family:inherit; }
+a { color:inherit; text-decoration:none; }
+.hidden { display:none !important; }
+img { max-width:100%; }
+/* ═══════════════════════════════════════════════ SCROLLBAR */
+::-webkit-scrollbar { width:5px; height:5px; }
+::-webkit-scrollbar-track { background:transparent; }
+::-webkit-scrollbar-thumb { background:var(--bg-elevated); border-radius:99px; }
+/* ═══════════════════════════════════════════════ AUTH SCREEN */
+#auth-screen {
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:
+    radial-gradient(ellipse 80% 60% at 20% -10%, rgba(79,110,247,.18) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 80% 110%, rgba(168,85,247,.12) 0%, transparent 60%),
+    var(--bg-base);
+}
+.auth-wrap {
+  width:100%;
+  max-width:420px;
+  padding:20px;
+}
+.auth-brand {
+  text-align:center;
+  margin-bottom:32px;
+}
+.auth-logo {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:64px; height:64px;
+  background:linear-gradient(135deg,#4f6ef7,#a855f7);
+  border-radius:20px;
+  font-size:30px;
+  margin-bottom:16px;
+  box-shadow:0 0 40px rgba(79,110,247,.4);
+}
+.auth-brand h1 {
+  font-size:28px;
+  font-weight:800;
+  background:linear-gradient(135deg, #e2e8f0, #94a3b8);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  letter-spacing:-.5px;
+}
+.auth-brand .auth-subtitle {
+  font-size:13px;
+  color:var(--text-sec);
+  margin-top:6px;
+  line-height:1.5;
+}
+.auth-card {
+  background:var(--bg-card);
+  border:1px solid var(--border);
+  border-radius:var(--radius-xl);
+  padding:32px;
+  box-shadow:var(--shadow-lg);
+  backdrop-filter:blur(20px);
+}
+.auth-tabs {
+  display:flex;
+  background:var(--bg-input);
+  border-radius:var(--radius);
+  padding:4px;
+  margin-bottom:28px;
+  gap:4px;
+}
+.auth-tab {
+  flex:1;
+  padding:9px 16px;
+  border-radius:var(--radius-sm);
+  border:none;
+  background:transparent;
+  color:var(--text-sec);
+  font-size:14px;
+  font-weight:500;
+  transition:var(--transition);
+  letter-spacing:.01em;
+}
+.auth-tab.active {
+  background:var(--accent);
+  color:#fff;
+  box-shadow:0 2px 12px rgba(79,110,247,.4);
+}
+.form-group { margin-bottom:16px; }
+.form-label {
+  display:flex;
+  align-items:center;
+  gap:6px;
+  font-size:12px;
+  font-weight:600;
+  color:var(--text-sec);
+  text-transform:uppercase;
+  letter-spacing:.06em;
+  margin-bottom:7px;
+}
+.form-control {
+  width:100%;
+  background:var(--bg-input);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:11px 14px;
+  color:var(--text-primary);
+  font-size:14px;
+  transition:border-color var(--transition), box-shadow var(--transition);
+  outline:none;
+  -webkit-appearance:none;
+}
+.form-control:focus {
+  border-color:var(--border-focus);
+  box-shadow:0 0 0 3px var(--accent-glow);
+}
+.form-control::placeholder { color:var(--text-muted); }
+.btn-primary {
+  width:100%;
+  padding:13px 20px;
+  background:linear-gradient(135deg,#4f6ef7,#6b84fa);
+  border:none;
+  border-radius:var(--radius);
+  color:#fff;
+  font-size:15px;
+  font-weight:600;
+  letter-spacing:.01em;
+  transition:var(--transition);
+  box-shadow:0 4px 20px rgba(79,110,247,.35);
+  position:relative;
+  overflow:hidden;
+}
+.btn-primary::after {
+  content:'';
+  position:absolute;
+  inset:0;
+  background:linear-gradient(rgba(255,255,255,.06),transparent);
+  pointer-events:none;
+}
+.btn-primary:hover { transform:translateY(-1px); box-shadow:0 6px 28px rgba(79,110,247,.45); }
+.btn-primary:active { transform:translateY(0); }
+.btn-primary:disabled { opacity:.5; cursor:not-allowed; transform:none; }
+.auth-demo-hint {
+  margin-top:16px;
+  padding:12px 14px;
+  background:var(--accent-dim);
+  border:1px solid rgba(79,110,247,.2);
+  border-radius:var(--radius);
+  font-size:12px;
+  color:var(--accent-light);
+  text-align:center;
+  line-height:1.6;
+}
+.auth-error {
+  margin-top:12px;
+  padding:10px 14px;
+  background:var(--red-dim);
+  border:1px solid rgba(239,68,68,.25);
+  border-radius:var(--radius);
+  color:var(--red);
+  font-size:13px;
+  text-align:center;
+}
+/* ═══════════════════════════════════════════════ APP LAYOUT */
+#app-screen { display:flex; min-height:100vh; }
+/* ─── Sidebar */
+.sidebar {
+  width:var(--sidebar-w);
+  background:var(--bg-surface);
+  border-right:1px solid var(--border);
+  display:flex;
+  flex-direction:column;
+  position:fixed;
+  top:0; left:0; bottom:0;
+  z-index:100;
+  overflow-y:auto;
+}
+.sidebar-header {
+  padding:20px 20px 18px;
+  border-bottom:1px solid var(--border);
+  flex-shrink:0;
+}
+.sidebar-logo {
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.sidebar-logo-icon {
+  width:36px; height:36px;
+  background:linear-gradient(135deg,#4f6ef7,#a855f7);
+  border-radius:10px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:18px;
+  flex-shrink:0;
+}
+.sidebar-logo-text h2 {
+  font-size:15px;
+  font-weight:800;
+  color:var(--text-primary);
+  letter-spacing:-.3px;
+}
+.sidebar-logo-text p {
+  font-size:10px;
+  color:var(--text-muted);
+  margin-top:1px;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+}
+.sidebar-nav {
+  flex:1;
+  padding:12px 10px;
+  overflow-y:auto;
+}
+.nav-section-label {
+  font-size:10px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:.1em;
+  color:var(--text-muted);
+  padding:8px 10px 4px;
+  margin-top:4px;
+}
+.nav-item {
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:9px 12px;
+  border-radius:var(--radius);
+  border:none;
+  background:transparent;
+  color:var(--text-sec);
+  font-size:13.5px;
+  font-weight:500;
+  width:100%;
+  text-align:left;
+  margin-bottom:1px;
+  transition:var(--transition);
+  cursor:pointer;
+  position:relative;
+}
+.nav-item:hover { background:var(--bg-elevated); color:var(--text-primary); }
+.nav-item.active {
+  background:var(--accent-dim);
+  color:var(--accent-light);
+  font-weight:600;
+}
+.nav-item.active::before {
+  content:'';
+  position:absolute;
+  left:0; top:4px; bottom:4px;
+  width:3px;
+  background:var(--accent);
+  border-radius:0 3px 3px 0;
+}
+.nav-icon { width:18px; text-align:center; font-size:15px; flex-shrink:0; }
+.nav-badge {
+  margin-left:auto;
+  font-size:10px;
+  font-weight:700;
+  background:var(--red);
+  color:#fff;
+  padding:2px 6px;
+  border-radius:20px;
+}
+.sidebar-footer {
+  padding:16px 14px;
+  border-top:1px solid var(--border);
+  flex-shrink:0;
+}
+.user-card {
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:10px 12px;
+  background:var(--bg-elevated);
+  border-radius:var(--radius);
+  margin-bottom:10px;
+  cursor:default;
+}
+.user-avatar {
+  width:34px; height:34px;
+  background:linear-gradient(135deg,#4f6ef7,#a855f7);
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:14px;
+  font-weight:700;
+  flex-shrink:0;
+}
+.user-info p:first-child { font-size:13px; font-weight:600; color:var(--text-primary); }
+.user-info p:last-child {
+  font-size:10px;
+  color:var(--text-muted);
+  text-transform:uppercase;
+  letter-spacing:.05em;
+  margin-top:1px;
+}
+.btn-logout {
+  width:100%;
+  padding:8px 12px;
+  background:transparent;
+  border:1px solid var(--border);
+  border-radius:var(--radius-sm);
+  color:var(--text-sec);
+  font-size:12px;
+  font-weight:500;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  transition:var(--transition);
+}
+.btn-logout:hover { border-color:var(--red); color:var(--red); background:var(--red-dim); }
+/* ─── Main content */
+.main {
+  margin-left:var(--sidebar-w);
+  flex:1;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+}
+.topbar {
+  height:56px;
+  background:var(--bg-surface);
+  border-bottom:1px solid var(--border);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 28px;
+  flex-shrink:0;
+  position:sticky;
+  top:0;
+  z-index:50;
+}
+.topbar-left h3 { font-size:15px; font-weight:700; color:var(--text-primary); }
+.topbar-left p { font-size:12px; color:var(--text-sec); margin-top:1px; }
+.topbar-right { display:flex; align-items:center; gap:10px; }
+.topbar-chip {
+  display:flex;
+  align-items:center;
+  gap:6px;
+  padding:5px 10px;
+  background:var(--green-dim);
+  border:1px solid rgba(16,185,129,.2);
+  border-radius:20px;
+  font-size:11px;
+  font-weight:600;
+  color:var(--green);
+}
+.dot-live {
+  width:7px; height:7px;
+  background:var(--green);
+  border-radius:50%;
+  animation:pulse-dot 2s ease infinite;
+}
+@keyframes pulse-dot {
+  0%,100% { opacity:1; transform:scale(1); }
+  50% { opacity:.5; transform:scale(.8); }
+}
+.page-content { padding:28px; flex:1; }
+/* ═══════════════════════════════════════════════ PAGES */
+.page { display:none; }
+.page.active { display:block; }
+/* ─── Section header */
+.section-header {
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  margin-bottom:24px;
+  flex-wrap:wrap;
+  gap:12px;
+}
+.section-title { font-size:22px; font-weight:800; letter-spacing:-.4px; }
+.section-sub { font-size:13px; color:var(--text-sec); margin-top:4px; }
+/* ═══════════════════════════════════════════════ STAT CARDS */
+.stats-grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fill, minmax(180px,1fr));
+  gap:14px;
+  margin-bottom:24px;
+}
+.stat-card {
+  background:var(--bg-card);
+  border:1px solid var(--border);
+  border-radius:var(--radius-lg);
+  padding:20px;
+  position:relative;
+  overflow:hidden;
+  transition:var(--transition);
+  cursor:default;
+}
+.stat-card:hover { border-color:rgba(255,255,255,.12); transform:translateY(-2px); }
+.stat-card-accent {
+  position:absolute;
+  top:0; left:0; right:0;
+  height:2px;
+}
+.stat-icon {
+  width:36px; height:36px;
+  border-radius:var(--radius);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:17px;
+  margin-bottom:14px;
+}
+.stat-value { font-size:30px; font-weight:800; letter-spacing:-1px; line-height:1; }
+.stat-label { font-size:12px; color:var(--text-sec); margin-top:6px; font-weight:500; }
+.stat-trend {
+  display:flex;
+  align-items:center;
+  gap:4px;
+  font-size:11px;
+  margin-top:8px;
+  font-weight:600;
+}
+/* ═══════════════════════════════════════════════ CARD */
+.card {
+  background:var(--bg-card);
+  border:1px solid var(--border);
+  border-radius:var(--radius-lg);
+  overflow:hidden;
+}
+.card-header {
+  padding:16px 20px;
+  border-bottom:1px solid var(--border);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+.card-title {
+  font-size:14px;
+  font-weight:700;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.card-body { padding:20px; }
+/* ═══════════════════════════════════════════════ CHARTS GRID */
+.charts-grid {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px;
+  margin-bottom:24px;
+}
+.chart-wrap {
+  height:200px;
+  position:relative;
+  padding:4px;
+}
+/* ═══════════════════════════════════════════════ TABLE */
+.table-wrap { overflow-x:auto; }
+table { width:100%; border-collapse:collapse; }
+thead th {
+  padding:11px 16px;
+  font-size:11px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:.07em;
+  color:var(--text-muted);
+  background:var(--bg-surface);
+  border-bottom:1px solid var(--border);
+  text-align:left;
+  white-space:nowrap;
+}
+tbody td {
+  padding:13px 16px;
+  font-size:13px;
+  border-bottom:1px solid rgba(255,255,255,.04);
+  vertical-align:middle;
+}
+tbody tr:last-child td { border-bottom:none; }
+tbody tr { transition:background var(--transition); }
+tbody tr:hover td { background:rgba(255,255,255,.025); }
+.td-mono { font-family:'JetBrains Mono',monospace; font-size:12px; }
+/* ═══════════════════════════════════════════════ BADGES */
+.badge {
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  padding:3px 9px;
+  border-radius:20px;
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:.03em;
+  white-space:nowrap;
+}
+.badge-pass     { background:var(--green-dim); color:var(--green); }
+.badge-fail     { background:var(--red-dim);   color:var(--red); }
+.badge-warn     { background:var(--orange-dim);color:var(--orange); }
+.badge-review   { background:var(--yellow-dim);color:var(--yellow); }
+.badge-pending  { background:rgba(148,163,184,.1); color:var(--text-sec); }
+.badge-critical { background:rgba(239,68,68,.2); color:#ff6b6b; border:1px solid rgba(239,68,68,.3); }
+.badge-high     { background:rgba(249,115,22,.15); color:#fb923c; }
+.badge-medium   { background:var(--orange-dim); color:var(--orange); }
+.badge-low      { background:var(--green-dim); color:var(--green); }
+.badge-info     { background:var(--accent-dim); color:var(--accent-light); }
+/* ═══════════════════════════════════════════════ BUTTONS */
+.btn {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  padding:9px 16px;
+  border-radius:var(--radius);
+  font-size:13px;
+  font-weight:600;
+  border:none;
+  cursor:pointer;
+  transition:var(--transition);
+  white-space:nowrap;
+  font-family:inherit;
+}
+.btn-sm { padding:6px 12px; font-size:12px; }
+.btn-lg { padding:13px 24px; font-size:15px; }
+.btn-accent {
+  background:linear-gradient(135deg,#4f6ef7,#6b84fa);
+  color:#fff;
+  box-shadow:0 4px 14px rgba(79,110,247,.3);
+}
+.btn-accent:hover { transform:translateY(-1px); box-shadow:0 6px 20px rgba(79,110,247,.4); }
+.btn-ghost {
+  background:var(--bg-elevated);
+  border:1px solid var(--border);
+  color:var(--text-sec);
+}
+.btn-ghost:hover { border-color:rgba(255,255,255,.15); color:var(--text-primary); }
+.btn-danger {
+  background:var(--red-dim);
+  border:1px solid rgba(239,68,68,.25);
+  color:var(--red);
+}
+.btn-danger:hover { background:rgba(239,68,68,.2); }
+.btn-success {
+  background:var(--green-dim);
+  border:1px solid rgba(16,185,129,.25);
+  color:var(--green);
+}
+.btn:disabled { opacity:.45; cursor:not-allowed; transform:none !important; }
+/* ═══════════════════════════════════════════════ SCAN FORM */
+.scan-layout {
+  display:grid;
+  grid-template-columns:1fr 380px;
+  gap:20px;
+  align-items:start;
+}
+.upload-zone {
+  border:2px dashed rgba(79,110,247,.25);
+  border-radius:var(--radius-lg);
+  padding:40px 20px;
+  text-align:center;
+  cursor:pointer;
+  transition:var(--transition);
+  background:var(--accent-dim);
+  margin-bottom:20px;
+  position:relative;
+}
+.upload-zone:hover,
+.upload-zone.drag { border-color:var(--accent); background:rgba(79,110,247,.1); }
+.upload-zone-icon { font-size:40px; margin-bottom:12px; }
+.upload-zone h4 { font-size:15px; font-weight:700; margin-bottom:6px; }
+.upload-zone p { font-size:13px; color:var(--text-sec); }
+.upload-zone p span { color:var(--accent-light); font-weight:600; }
+.upload-preview-img {
+  max-width:100%; max-height:180px;
+  border-radius:var(--radius);
+  margin-top:12px;
+  display:none;
+  border:1px solid var(--border);
+}
+.scenario-cards {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+  margin-bottom:20px;
+}
+.scenario-item {
+  border:1.5px solid var(--border);
+  border-radius:var(--radius-lg);
+  padding:14px 10px;
+  cursor:pointer;
+  text-align:center;
+  transition:var(--transition);
+  background:var(--bg-elevated);
+}
+.scenario-item:hover { border-color:rgba(79,110,247,.4); }
+.scenario-item.active {
+  border-color:var(--accent);
+  background:var(--accent-dim);
+  box-shadow:0 0 0 2px var(--accent-glow);
+}
+.scenario-emoji { font-size:22px; margin-bottom:6px; }
+.scenario-name { font-size:12px; font-weight:700; }
+.scenario-desc { font-size:10px; color:var(--text-sec); margin-top:3px; line-height:1.4; }
+.scan-info-card {
+  background:var(--bg-card);
+  border:1px solid var(--border);
+  border-radius:var(--radius-lg);
+  padding:20px;
+  position:sticky;
+  top:80px;
+}
+.scan-info-title {
+  font-size:13px;
+  font-weight:700;
+  margin-bottom:16px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  color:var(--text-sec);
+  text-transform:uppercase;
+  letter-spacing:.06em;
+}
+.rule-list { display:flex; flex-direction:column; gap:8px; }
+.rule-item {
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:7px 10px;
+  background:var(--bg-elevated);
+  border-radius:var(--radius);
+  font-size:12px;
+}
+.rule-dot { width:6px; height:6px; border-radius:50%; flex-shrink:0; }
+/* ═══════════════════════════════════════════════ PROCESSING */
+.processing-overlay {
+  background:var(--bg-card);
+  border:1px solid var(--border);
+  border-radius:var(--radius-xl);
+  padding:48px 32px;
+  text-align:center;
+  max-width:480px;
+  margin:40px auto;
+}
+.spinner-ring {
+  width:56px; height:56px;
+  border:3px solid var(--border);
+  border-top-color:var(--accent);
+  border-radius:50%;
+  animation:spin 1s linear infinite;
+  margin:0 auto 20px;
+}
+@keyframes spin { to { transform:rotate(360deg); } }
+.progress-track {
+  background:var(--bg-input);
+  border-radius:99px;
+  height:5px;
+  margin-top:20px;
+  overflow:hidden;
+}
+.progress-thumb {
+  height:100%;
+  background:linear-gradient(to right,#4f6ef7,#a855f7);
+  border-radius:99px;
+  transition:width .5s ease;
+}
+.step-list {
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  margin-top:20px;
+  text-align:left;
+}
+.step-item {
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-size:12px;
+  color:var(--text-muted);
+  padding:6px 10px;
+  border-radius:var(--radius-sm);
+  transition:var(--transition);
+}
+.step-item.active { color:var(--text-primary); background:var(--accent-dim); }
+.step-item.done { color:var(--green); }
+.step-dot { width:8px; height:8px; border-radius:50%; background:currentColor; flex-shrink:0; }
+/* ═══════════════════════════════════════════════ RESULTS */
+.results-header {
+  display:grid;
+  grid-template-columns:240px 1fr;
+  gap:16px;
+  margin-bottom:20px;
+}
+.score-card {
+  background:var(--bg-card);
+  border:1px solid var(--border);
+  border-radius:var(--radius-xl);
+  padding:28px 20px;
+  text-align:center;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
+.score-ring-wrap {
+  position:relative;
+  width:130px;
+  height:130px;
+  margin-bottom:16px;
+}
+.score-ring-svg { transform:rotate(-90deg); }
+.score-ring-bg { fill:none; stroke:var(--bg-elevated); stroke-width:10; }
+.score-ring-fill {
+  fill:none;
+  stroke-width:10;
+  stroke-linecap:round;
+  transition:stroke-dashoffset 1s cubic-bezier(.2,.8,.4,1);
+}
+.score-number {
+  position:absolute;
+  inset:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+}
+.score-num { font-size:28px; font-weight:900; letter-spacing:-1px; }
+.score-pct { font-size:12px; color:var(--text-sec); font-weight:600; }
+.score-label { font-size:12px; color:var(--text-sec); margin-bottom:12px; }
+.summary-card {
+  background:var(--bg-card);
+  border:1px solid var(--border);
+  border-radius:var(--radius-xl);
+  padding:24px;
+}
+.summary-metrics {
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:12px;
+  margin-bottom:20px;
+}
+.metric-box {
+  background:var(--bg-elevated);
+  border-radius:var(--radius);
+  padding:14px 12px;
+  text-align:center;
+}
+.metric-num { font-size:24px; font-weight:800; letter-spacing:-1px; }
+.metric-lbl { font-size:11px; color:var(--text-sec); margin-top:4px; font-weight:500; }
+.result-actions { display:flex; gap:10px; flex-wrap:wrap; }
+/* ── Violations */
+.violations-list { display:flex; flex-direction:column; gap:10px; margin-bottom:24px; }
+.violation-item {
+  background:var(--bg-card);
+  border:1px solid var(--border);
+  border-left-width:3px;
+  border-radius:0 var(--radius-lg) var(--radius-lg) 0;
+  padding:14px 18px;
+  transition:var(--transition);
+}
+.violation-item:hover { background:var(--bg-elevated); }
+.violation-item.v-fail     { border-left-color:var(--red); }
+.violation-item.v-warn     { border-left-color:var(--orange); }
+.violation-item.v-review   { border-left-color:var(--yellow); }
+.violation-item.v-pass     { border-left-color:var(--green); }
+.violation-row {
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-bottom:6px;
+}
+.violation-msg { font-size:13px; color:var(--text-sec); line-height:1.5; }
+.violation-meta {
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin-top:6px;
+  font-size:11px;
+  color:var(--text-muted);
+}
+.violation-meta code {
+  font-family:'JetBrains Mono',monospace;
+  background:var(--bg-elevated);
+  padding:2px 6px;
+  border-radius:4px;
+  font-size:10px;
+  color:var(--accent-light);
+}
+.conf-bar-wrap { display:flex; align-items:center; gap:6px; }
+.conf-bar { flex:1; height:4px; background:var(--bg-elevated); border-radius:99px; overflow:hidden; min-width:60px; }
+.conf-fill { height:100%; border-radius:99px; }
+.conf-high { background:var(--green); }
+.conf-med  { background:var(--orange); }
+.conf-low  { background:var(--red); }
+/* ── Declarations grid */
+.decl-grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
+  gap:10px;
+}
+.decl-card {
+  background:var(--bg-elevated);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:13px 14px;
+  transition:var(--transition);
+}
+.decl-card:hover { border-color:rgba(255,255,255,.1); }
+.decl-field {
+  font-size:10px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  color:var(--text-muted);
+  margin-bottom:5px;
+}
+.decl-value { font-size:13px; font-weight:500; word-break:break-word; line-height:1.4; }
+.decl-value.missing { color:var(--red); font-style:italic; opacity:.8; }
+.decl-footer { display:flex; align-items:center; gap:8px; margin-top:8px; }
+/* ═══════════════════════════════════════════════ EMPTY STATE */
+.empty-state {
+  text-align:center;
+  padding:56px 24px;
+  color:var(--text-muted);
+}
+.empty-icon { font-size:48px; margin-bottom:14px; opacity:.6; }
+.empty-title { font-size:15px; font-weight:600; color:var(--text-sec); margin-bottom:6px; }
+.empty-desc { font-size:13px; line-height:1.6; }
+/* ═══════════════════════════════════════════════ TOAST */
+#toast-root {
+  position:fixed;
+  top:20px;
+  right:20px;
+  z-index:9999;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  pointer-events:none;
+}
+.toast {
+  pointer-events:all;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:14px 18px;
+  background:var(--bg-card);
+  border:1px solid var(--border);
+  border-radius:var(--radius-lg);
+  min-width:300px;
+  max-width:420px;
+  box-shadow:var(--shadow-lg);
+  animation:toastIn .3s cubic-bezier(.2,.8,.4,1);
+  font-size:13px;
+  font-weight:500;
+}
+.toast.t-success { border-left:3px solid var(--green); }
+.toast.t-error   { border-left:3px solid var(--red); }
+.toast.t-info    { border-left:3px solid var(--accent); }
+.toast.t-warn    { border-left:3px solid var(--orange); }
+@keyframes toastIn {
+  from { transform:translateX(20px); opacity:0; }
+  to   { transform:translateX(0); opacity:1; }
+}
+/* ═══════════════════════════════════════════════ LOADING INLINE */
+.spin-sm {
+  display:inline-block;
+  width:13px; height:13px;
+  border:2px solid rgba(255,255,255,.2);
+  border-top-color:#fff;
+  border-radius:50%;
+  animation:spin .7s linear infinite;
+  vertical-align:middle;
+}
+/* ═══════════════════════════════════════════════ RULES TABLE */
+.rules-table-wrap { overflow-x:auto; }
+/* ═══════════════════════════════════════════════ ABOUT */
+.about-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:20px; }
+.about-block {
+  background:var(--bg-card);
+  border:1px solid var(--border);
+  border-radius:var(--radius-lg);
+  padding:20px;
+}
+.about-block h4 {
+  font-size:13px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:.06em;
+  color:var(--text-sec);
+  margin-bottom:12px;
+}
+.about-block ul {
+  list-style:none;
+  display:flex;
+  flex-direction:column;
+  gap:7px;
+}
+.about-block li {
+  font-size:13px;
+  color:var(--text-sec);
+  display:flex;
+  align-items:flex-start;
+  gap:8px;
+  line-height:1.5;
+}
+.about-block li::before { content:'→'; color:var(--accent); flex-shrink:0; }
+.alert-box {
+  margin-top:20px;
+  padding:14px 16px;
+  background:var(--orange-dim);
+  border:1px solid rgba(245,158,11,.2);
+  border-radius:var(--radius-lg);
+  font-size:13px;
+  color:var(--orange);
+  line-height:1.6;
+  display:flex;
+  gap:10px;
+}
+/* ═══════════════════════════════════════════════ UTILS */
+.flex { display:flex; }
+.items-center { align-items:center; }
+.justify-between { justify-content:space-between; }
+.gap-2 { gap:8px; }
+.gap-3 { gap:12px; }
+.mt-1 { margin-top:4px; }
+.mt-2 { margin-top:8px; }
+.mt-4 { margin-top:16px; }
+.mt-5 { margin-top:20px; }
+.mb-3 { margin-bottom:12px; }
+.mb-4 { margin-bottom:16px; }
+.mb-5 { margin-bottom:20px; }
+.text-sm { font-size:13px; }
+.text-xs { font-size:11px; }
+.text-muted { color:var(--text-sec); }
+.text-green { color:var(--green); }
+.text-red { color:var(--red); }
+.font-mono { font-family:'JetBrains Mono',monospace; }
+.w-full { width:100%; }
+.section-divider { font-size:13px; font-weight:700; color:var(--text-sec); display:flex; align-items:center; gap:10px; margin:20px 0 14px; text-transform:uppercase; letter-spacing:.08em; }
+.section-divider::after { content:''; flex:1; height:1px; background:var(--border); }
+</style>
+</head>
+<body>
+
+<!-- ══ TOAST ROOT ══════════════════════════════════════════════════════════ -->
+<div id="toast-root"></div>
+
+<!-- ══ AUTH SCREEN ════════════════════════════════════════════════════════ -->
+<div id="auth-screen">
+  <div class="auth-wrap">
+    <div class="auth-brand">
+      <div class="auth-logo">⚖️</div>
+      <h1>NirikshanX</h1>
+      <p class="auth-subtitle">Intelligent Packaged Commodity Compliance System<br>Legal Metrology (PC) Rules, 2011</p>
+    </div>
+    <div class="auth-card">
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="tab-login-btn" onclick="switchTab('login')">Sign In</button>
+        <button class="auth-tab" id="tab-register-btn" onclick="switchTab('register')">Register</button>
+      </div>
+
+      <!-- LOGIN -->
+      <div id="pane-login">
+        <div class="form-group">
+          <label class="form-label">📧 Email Address</label>
+          <input class="form-control" type="email" id="l-email" value="admin@nirikshanx.gov.in" placeholder="officer@dept.gov.in" autocomplete="email">
+        </div>
+        <div class="form-group">
+          <label class="form-label">🔐 Password</label>
+          <input class="form-control" type="password" id="l-pass" value="password123" placeholder="••••••••" autocomplete="current-password">
+        </div>
+        <button class="btn-primary" id="login-btn" onclick="doLogin()">Sign In to NirikshanX</button>
+        <div id="login-err" class="auth-error hidden"></div>
+        <div class="auth-demo-hint">Demo: <strong>admin@nirikshanx.gov.in</strong> / <strong>password123</strong></div>
+      </div>
+
+      <!-- REGISTER -->
+      <div id="pane-register" class="hidden">
+        <div class="form-group">
+          <label class="form-label">👤 Full Name</label>
+          <input class="form-control" type="text" id="r-name" placeholder="Rajesh Kumar">
+        </div>
+        <div class="form-group">
+          <label class="form-label">📧 Email</label>
+          <input class="form-control" type="email" id="r-email" placeholder="officer@dept.gov.in">
+        </div>
+        <div class="form-group">
+          <label class="form-label">🏷️ Role</label>
+          <select class="form-control" id="r-role">
+            <option value="ENFORCEMENT_OFFICER">Enforcement Officer</option>
+            <option value="INSPECTOR">Inspector</option>
+            <option value="MANUFACTURER">Manufacturer</option>
+            <option value="CONSUMER">Consumer</option>
+            <option value="ADMIN">Admin</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">🔐 Password</label>
+          <input class="form-control" type="password" id="r-pass" placeholder="Minimum 6 characters">
+        </div>
+        <button class="btn-primary" id="register-btn" onclick="doRegister()">Create Account</button>
+        <div id="register-err" class="auth-error hidden"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ APP SCREEN ══════════════════════════════════════════════════════════ -->
+<div id="app-screen" class="hidden">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">
+        <div class="sidebar-logo-icon">⚖️</div>
+        <div class="sidebar-logo-text">
+          <h2>NirikshanX</h2>
+          <p>Compliance System</p>
+        </div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Overview</div>
+      <button class="nav-item active" id="nav-dashboard" onclick="showPage('dashboard',this)">
+        <span class="nav-icon">📊</span> Dashboard
+      </button>
+
+      <div class="nav-section-label">Inspection</div>
+      <button class="nav-item" id="nav-scan" onclick="showPage('scan',this)">
+        <span class="nav-icon">🔬</span> Scan Product
+      </button>
+      <button class="nav-item" id="nav-history" onclick="showPage('history',this)">
+        <span class="nav-icon">📋</span> Scan History
+      </button>
+
+      <div class="nav-section-label">Reference</div>
+      <button class="nav-item" id="nav-rules" onclick="showPage('rules',this)">
+        <span class="nav-icon">📜</span> Rule Engine
+      </button>
+      <button class="nav-item" id="nav-about" onclick="showPage('about',this)">
+        <span class="nav-icon">ℹ️</span> About
+      </button>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-card">
+        <div class="user-avatar" id="user-av">A</div>
+        <div class="user-info">
+          <p id="user-name">Admin</p>
+          <p id="user-role">Role</p>
+        </div>
+      </div>
+      <button class="btn-logout" onclick="logout()">
+        <span>⬛</span> Sign Out
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+    <header class="topbar">
+      <div class="topbar-left">
+        <h3 id="topbar-title">Dashboard</h3>
+        <p id="topbar-sub">Welcome back to NirikshanX</p>
+      </div>
+      <div class="topbar-right">
+        <div class="topbar-chip">
+          <span class="dot-live"></span> API Live
+        </div>
+        <button class="btn btn-sm btn-ghost" onclick="showPage('scan', document.getElementById('nav-scan'))">
+          + New Scan
+        </button>
+      </div>
+    </header>
+
+    <div class="page-content">
+
+      <!-- ══ DASHBOARD ══════════════════════════════════════════════════ -->
+      <div class="page active" id="page-dashboard">
+        <div class="section-header">
+          <div>
+            <div class="section-title">Compliance Overview</div>
+            <div class="section-sub">Real-time statistics from the NirikshanX database</div>
+          </div>
+          <button class="btn btn-ghost btn-sm" onclick="loadDashboard()">↻ Refresh</button>
+        </div>
+
+        <div class="stats-grid" id="stats-grid">
+          <div class="stat-card">
+            <div class="stat-card-accent" style="background:linear-gradient(to right,#4f6ef7,#6b84fa)"></div>
+            <div class="stat-icon" style="background:var(--accent-dim)">📦</div>
+            <div class="stat-value" id="s-total">—</div>
+            <div class="stat-label">Total Scans</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-accent" style="background:linear-gradient(to right,#10b981,#34d399)"></div>
+            <div class="stat-icon" style="background:var(--green-dim)">✅</div>
+            <div class="stat-value text-green" id="s-compliant">—</div>
+            <div class="stat-label">Compliant Products</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-accent" style="background:linear-gradient(to right,#ef4444,#f87171)"></div>
+            <div class="stat-icon" style="background:var(--red-dim)">⚠️</div>
+            <div class="stat-value" style="color:var(--red)" id="s-violations">—</div>
+            <div class="stat-label">Total Violations</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-accent" style="background:linear-gradient(to right,#eab308,#facc15)"></div>
+            <div class="stat-icon" style="background:var(--yellow-dim)">👁</div>
+            <div class="stat-value" style="color:var(--yellow)" id="s-pending">—</div>
+            <div class="stat-label">Pending Review</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-accent" style="background:linear-gradient(to right,#f59e0b,#fb923c)"></div>
+            <div class="stat-icon" style="background:var(--orange-dim)">🚨</div>
+            <div class="stat-value" style="color:var(--orange)" id="s-high">—</div>
+            <div class="stat-label">High Severity</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-accent" style="background:linear-gradient(to right,#a855f7,#c084fc)"></div>
+            <div class="stat-icon" style="background:var(--purple-dim)">📈</div>
+            <div class="stat-value" style="color:var(--purple)" id="s-rate">—%</div>
+            <div class="stat-label">Compliance Rate</div>
+          </div>
+        </div>
+
+        <div class="charts-grid">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">📊 Scans by Category</div>
+            </div>
+            <div class="card-body">
+              <div class="chart-wrap"><canvas id="chart-category"></canvas></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">🎯 Compliance Status</div>
+            </div>
+            <div class="card-body">
+              <div class="chart-wrap"><canvas id="chart-status"></canvas></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">🕐 Recent Scans</div>
+            <button class="btn btn-sm btn-accent" onclick="showPage('scan', document.getElementById('nav-scan'))">+ New Scan</button>
+          </div>
+          <div id="recent-body">
+            <div class="empty-state">
+              <div class="empty-icon">📦</div>
+              <div class="empty-title">No scans yet</div>
+              <div class="empty-desc">Run your first product compliance scan to see results here.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ SCAN ════════════════════════════════════════════════════════ -->
+      <div class="page" id="page-scan">
+        <div class="section-header">
+          <div>
+            <div class="section-title">Scan Product</div>
+            <div class="section-sub">Upload a label image and run AI-powered compliance analysis</div>
+          </div>
+        </div>
+
+        <!-- FORM -->
+        <div id="scan-form-wrap">
+          <div class="scan-layout">
+            <div>
+              <div class="card" style="padding:24px;margin-bottom:16px">
+                <div class="mb-4">
+                  <label class="form-label" style="display:block;margin-bottom:7px">📦 Product Name</label>
+                  <input class="form-control" type="text" id="scan-name" placeholder="e.g. Sunrise Whole Wheat Flour 1kg">
+                </div>
+                <div class="mb-5">
+                  <label class="form-label" style="display:block;margin-bottom:7px">🏷️ Product Category</label>
+                  <select class="form-control" id="scan-cat">
+                    <option value="FOOD">🌾 Food &amp; Beverages</option>
+                    <option value="GENERAL">📦 General / FMCG</option>
+                    <option value="COSMETICS">💄 Cosmetics &amp; Personal Care</option>
+                    <option value="ELECTRONICS">⚡ Electronics</option>
+                    <option value="MEDICINE">💊 Medicine &amp; Pharma</option>
+                  </select>
+                </div>
+                <label class="form-label" style="display:block;margin-bottom:10px">🎬 Demo Scenario</label>
+                <div class="scenario-cards">
+                  <div class="scenario-item active" id="sc0" onclick="pickScenario(0)">
+                    <div class="scenario-emoji">✅</div>
+                    <div class="scenario-name">Compliant</div>
+                    <div class="scenario-desc">All mandatory declarations present &amp; valid</div>
+                  </div>
+                  <div class="scenario-item" id="sc1" onclick="pickScenario(1)">
+                    <div class="scenario-emoji">⚠️</div>
+                    <div class="scenario-name">Missing Fields</div>
+                    <div class="scenario-desc">Several required declarations absent</div>
+                  </div>
+                  <div class="scenario-item" id="sc2" onclick="pickScenario(2)">
+                    <div class="scenario-emoji">🚨</div>
+                    <div class="scenario-name">Multiple Issues</div>
+                    <div class="scenario-desc">Violations + low AI confidence signals</div>
+                  </div>
+                </div>
+              </div>
+              <div class="card" style="padding:24px">
+                <label class="form-label" style="display:block;margin-bottom:10px">📷 Product Label Image <span style="font-weight:400;color:var(--text-muted)">(optional)</span></label>
+                <div class="upload-zone" id="upload-zone"
+                  onclick="document.getElementById('file-inp').click()"
+                  ondragover="event.preventDefault();this.classList.add('drag')"
+                  ondragleave="this.classList.remove('drag')"
+                  ondrop="handleDrop(event)">
+                  <div class="upload-zone-icon">📷</div>
+                  <h4>Drop image here</h4>
+                  <p><span>Click to browse</span> or drag &amp; drop</p>
+                  <p style="font-size:11px;color:var(--text-muted);margin-top:6px">JPG, PNG, WEBP — up to 10MB</p>
+                  <img id="img-preview" class="upload-preview-img">
+                </div>
+                <input type="file" id="file-inp" accept="image/*" class="hidden" onchange="previewImg(event)">
+                <button class="btn btn-accent btn-lg w-full" id="scan-submit-btn" onclick="submitScan()" style="margin-top:16px">
+                  🔬 Run Compliance Scan
+                </button>
+              </div>
+            </div>
+
+            <div class="scan-info-card">
+              <div class="scan-info-title">📜 LM-PC Rules 2011</div>
+              <div class="rule-list" id="rules-sidebar">
+                <div class="rule-item"><div class="rule-dot" style="background:var(--red)"></div><span>Product Name &amp; Net Quantity</span></div>
+                <div class="rule-item"><div class="rule-dot" style="background:var(--red)"></div><span>Manufacturer Name &amp; Address</span></div>
+                <div class="rule-item"><div class="rule-dot" style="background:var(--red)"></div><span>MRP (inclusive all taxes)</span></div>
+                <div class="rule-item"><div class="rule-dot" style="background:var(--orange)"></div><span>Month &amp; Year of Manufacture</span></div>
+                <div class="rule-item"><div class="rule-dot" style="background:var(--orange)"></div><span>Best Before / Expiry Date</span></div>
+                <div class="rule-item"><div class="rule-dot" style="background:var(--orange)"></div><span>FSSAI License (14 digits)</span></div>
+                <div class="rule-item"><div class="rule-dot" style="background:var(--yellow)"></div><span>Country of Origin</span></div>
+                <div class="rule-item"><div class="rule-dot" style="background:var(--yellow)"></div><span>Ingredients &amp; Allergens</span></div>
+                <div class="rule-item"><div class="rule-dot" style="background:var(--green)"></div><span>Nutritional Information</span></div>
+              </div>
+              <div style="margin-top:16px;padding:12px;background:var(--accent-dim);border-radius:var(--radius);font-size:12px;color:var(--accent-light);line-height:1.6;border:1px solid rgba(79,110,247,.15)">
+                🤖 <strong>AI Mode: DEMO</strong><br>
+                Deterministic pipeline — no model files required. Select a scenario above to simulate different compliance outcomes.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PROCESSING -->
+        <div class="hidden" id="scan-processing">
+          <div class="processing-overlay">
+            <div class="spinner-ring"></div>
+            <h3 id="proc-title" style="font-size:17px;font-weight:700;margin-bottom:8px">Initializing Pipeline...</h3>
+            <p id="proc-sub" style="font-size:13px;color:var(--text-sec)">Please wait while NirikshanX analyses your product label</p>
+            <div class="progress-track">
+              <div class="progress-thumb" id="proc-bar" style="width:4%"></div>
+            </div>
+            <div class="step-list" id="proc-steps">
+              <div class="step-item" id="step0"><span class="step-dot"></span>Preprocessing image</div>
+              <div class="step-item" id="step1"><span class="step-dot"></span>Running OCR engine</div>
+              <div class="step-item" id="step2"><span class="step-dot"></span>Extracting declarations</div>
+              <div class="step-item" id="step3"><span class="step-dot"></span>Applying rule engine</div>
+              <div class="step-item" id="step4"><span class="step-dot"></span>Computing compliance score</div>
+              <div class="step-item" id="step5"><span class="step-dot"></span>Generating evidence report</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RESULTS -->
+        <div class="hidden" id="scan-results">
+          <div class="section-header" style="margin-top:8px">
+            <div>
+              <div class="section-title">Scan Results</div>
+              <p class="section-sub" id="res-subtitle"></p>
+            </div>
+            <div class="flex gap-2">
+              <button class="btn btn-ghost" onclick="resetScan()">← New Scan</button>
+              <button class="btn btn-ghost" id="pdf-btn" onclick="downloadPDF()">📄 PDF Report</button>
+            </div>
+          </div>
+
+          <div class="results-header">
+            <div class="score-card">
+              <div class="score-ring-wrap">
+                <svg class="score-ring-svg" width="130" height="130" viewBox="0 0 130 130">
+                  <circle class="score-ring-bg" cx="65" cy="65" r="55"/>
+                  <circle class="score-ring-fill" id="score-arc" cx="65" cy="65" r="55"
+                    stroke-dasharray="345.4" stroke-dashoffset="345.4"/>
+                </svg>
+                <div class="score-number">
+                  <span class="score-num" id="score-num">—</span>
+                  <span class="score-pct">%</span>
+                </div>
+              </div>
+              <p class="score-label">Compliance Score</p>
+              <div id="overall-badge"></div>
+              <p style="font-size:11px;color:var(--text-muted);margin-top:8px" id="res-product"></p>
+            </div>
+
+            <div class="summary-card">
+              <div class="summary-metrics">
+                <div class="metric-box">
+                  <div class="metric-num text-red" id="m-fail">0</div>
+                  <div class="metric-lbl">Violations</div>
+                </div>
+                <div class="metric-box">
+                  <div class="metric-num" style="color:var(--orange)" id="m-warn">0</div>
+                  <div class="metric-lbl">Warnings</div>
+                </div>
+                <div class="metric-box">
+                  <div class="metric-num" style="color:var(--yellow)" id="m-rev">0</div>
+                  <div class="metric-lbl">Review Req.</div>
+                </div>
+                <div class="metric-box">
+                  <div class="metric-num text-green" id="m-pass">0</div>
+                  <div class="metric-lbl">Passed</div>
+                </div>
+              </div>
+              <div class="section-divider">AI Pipeline Output</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:13px">
+                <div style="padding:10px 12px;background:var(--bg-elevated);border-radius:var(--radius)">
+                  <div style="color:var(--text-muted);font-size:11px;margin-bottom:3px">Declarations Found</div>
+                  <div id="m-decl" style="font-weight:700">—</div>
+                </div>
+                <div style="padding:10px 12px;background:var(--bg-elevated);border-radius:var(--radius)">
+                  <div style="color:var(--text-muted);font-size:11px;margin-bottom:3px">Category</div>
+                  <div id="m-cat" style="font-weight:700">—</div>
+                </div>
+                <div style="padding:10px 12px;background:var(--bg-elevated);border-radius:var(--radius)">
+                  <div style="color:var(--text-muted);font-size:11px;margin-bottom:3px">AI Mode</div>
+                  <div style="font-weight:700;color:var(--accent-light)">DEMO</div>
+                </div>
+                <div style="padding:10px 12px;background:var(--bg-elevated);border-radius:var(--radius)">
+                  <div style="color:var(--text-muted);font-size:11px;margin-bottom:3px">Scan ID</div>
+                  <div id="m-id" style="font-weight:700;font-family:'JetBrains Mono',monospace">—</div>
+                </div>
+              </div>
+              <div style="margin-top:14px;padding:12px;background:var(--orange-dim);border:1px solid rgba(245,158,11,.15);border-radius:var(--radius);font-size:12px;color:var(--orange)">
+                ⚠️ AI findings are <strong>indicative only</strong>. Human review required before any legal enforcement action under LM Act, 2009.
+              </div>
+            </div>
+          </div>
+
+          <div id="status-alert-banner" class="hidden" style="margin-top:16px;margin-bottom:16px"></div>
+
+          <div class="section-divider">AI Inspection Pipeline Telemetry</div>
+          <div class="card" style="margin-bottom:20px;padding:16px;background:var(--bg-card)">
+            <div style="font-size:13px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between">
+              <span>🔍 Multi-Stage AI Decision Reasoning</span>
+              <span id="ai-mode-tag" class="badge badge-info">AI Pipeline Active</span>
+            </div>
+            <div id="ai-debug-grid" style="display:grid;grid-template-columns:repeat(auto-fit, minmax(170px, 1fr));gap:10px">
+            </div>
+          </div>
+
+          <div class="section-divider">Violations &amp; Compliance Checks</div>
+          <div class="violations-list" id="violations-list"></div>
+
+          <div class="section-divider">Extracted Declarations (AI/OCR Output)</div>
+          <div class="decl-grid" id="decl-grid"></div>
+        </div>
+      </div>
+
+      <!-- ══ HISTORY ══════════════════════════════════════════════════════ -->
+      <div class="page" id="page-history">
+        <div class="section-header">
+          <div>
+            <div class="section-title">Scan History</div>
+            <div class="section-sub">All product compliance scans stored in the database</div>
+          </div>
+          <button class="btn btn-ghost btn-sm" onclick="loadHistory()">↻ Refresh</button>
+        </div>
+        <div class="card">
+          <div id="history-body">
+            <div class="empty-state">
+              <div class="empty-icon">📋</div>
+              <div class="empty-title">Loading scan history...</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ RULES ════════════════════════════════════════════════════════ -->
+      <div class="page" id="page-rules">
+        <div class="section-header">
+          <div>
+            <div class="section-title">Rule Engine</div>
+            <div class="section-sub">Legal Metrology (Packaged Commodities) Rules, 2011 — Mandatory Declaration Requirements</div>
+          </div>
+          <span class="badge badge-info">12 Active Rules</span>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">📜 Mandatory Declaration Rules</div>
+            <span class="badge badge-info">LM (PC) Rules 2011</span>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Rule ID</th>
+                  <th>Field</th>
+                  <th>Requirement</th>
+                  <th>Severity</th>
+                  <th>Reference</th>
+                  <th>Categories</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td class="td-mono">LM-PRODUCT_NAME</td><td>Product Name</td><td>Name of the packaged commodity</td><td><span class="badge badge-high">HIGH</span></td><td>Rule 4(a)</td><td>All</td></tr>
+                <tr><td class="td-mono">LM-NET_QUANTITY</td><td>Net Quantity</td><td>In standard units (g, ml, l, kg, etc.)</td><td><span class="badge badge-high">HIGH</span></td><td>Rule 4(b)</td><td>All</td></tr>
+                <tr><td class="td-mono">LM-MANUFACTURER_NAME</td><td>Manufacturer Name</td><td>Name of manufacturer / packer / importer</td><td><span class="badge badge-critical">CRITICAL</span></td><td>Rule 4(c)</td><td>All</td></tr>
+                <tr><td class="td-mono">LM-MANUFACTURER_ADDRESS</td><td>Manufacturer Address</td><td>Complete postal address of manufacturer</td><td><span class="badge badge-critical">CRITICAL</span></td><td>Rule 4(c)</td><td>All</td></tr>
+                <tr><td class="td-mono">LM-COUNTRY_OF_ORIGIN</td><td>Country of Origin</td><td>Country where commodity is manufactured</td><td><span class="badge badge-medium">MEDIUM</span></td><td>Rule 4(d)</td><td>All</td></tr>
+                <tr><td class="td-mono">LM-MRP-FORMAT</td><td>MRP</td><td>Maximum Retail Price inclusive all taxes (Rs./₹)</td><td><span class="badge badge-critical">CRITICAL</span></td><td>Rule 4(e)</td><td>All</td></tr>
+                <tr><td class="td-mono">LM-MONTH_YEAR_OF_MFG</td><td>Month/Year of Mfg.</td><td>Month and year of manufacture or packing</td><td><span class="badge badge-high">HIGH</span></td><td>Rule 4(f)</td><td>All</td></tr>
+                <tr><td class="td-mono">LM-BEST_BEFORE</td><td>Best Before / Expiry</td><td>Best before date or expiry date of commodity</td><td><span class="badge badge-high">HIGH</span></td><td>Rule 4(g)</td><td>All</td></tr>
+                <tr><td class="td-mono">LM-FSSAI-FORMAT</td><td>FSSAI License</td><td>14-digit FSSAI license number (food products)</td><td><span class="badge badge-high">HIGH</span></td><td>FSS Act 2006</td><td>Food</td></tr>
+                <tr><td class="td-mono">LM-INGREDIENTS</td><td>Ingredients</td><td>List in descending order of weight/composition</td><td><span class="badge badge-high">HIGH</span></td><td>Rule 4(h)</td><td>Food, Cosmetics</td></tr>
+                <tr><td class="td-mono">LM-NUTRITIONAL_INFO</td><td>Nutritional Info</td><td>Energy, Protein, Fat, Carbs per 100g/100ml</td><td><span class="badge badge-medium">MEDIUM</span></td><td>Rule 4(i)</td><td>Food</td></tr>
+                <tr><td class="td-mono">LM-ALLERGEN_INFO</td><td>Allergen Info</td><td>Declaration of regulated allergens present</td><td><span class="badge badge-medium">MEDIUM</span></td><td>Rule 4(j)</td><td>Food</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="about-grid" style="margin-top:16px">
+          <div class="card" style="padding:20px">
+            <div class="card-title mb-3">⚖️ Legal Authority</div>
+            <ul style="list-style:none;display:flex;flex-direction:column;gap:6px">
+              <li style="font-size:13px;color:var(--text-sec)">→ Legal Metrology Act, 2009</li>
+              <li style="font-size:13px;color:var(--text-sec)">→ LM (Packaged Commodities) Rules, 2011</li>
+              <li style="font-size:13px;color:var(--text-sec)">→ Food Safety and Standards Act, 2006</li>
+              <li style="font-size:13px;color:var(--text-sec)">→ Drugs and Cosmetics Act, 1940</li>
+              <li style="font-size:13px;color:var(--text-sec)">→ Bureau of Indian Standards Act</li>
+            </ul>
+          </div>
+          <div class="card" style="padding:20px">
+            <div class="card-title mb-3">🏛️ Enforcing Authorities</div>
+            <ul style="list-style:none;display:flex;flex-direction:column;gap:6px">
+              <li style="font-size:13px;color:var(--text-sec)">→ Legal Metrology Controller (State)</li>
+              <li style="font-size:13px;color:var(--text-sec)">→ FSSAI (Food products)</li>
+              <li style="font-size:13px;color:var(--text-sec)">→ Drug Controller (Pharmaceuticals)</li>
+              <li style="font-size:13px;color:var(--text-sec)">→ Weights &amp; Measures Inspectors</li>
+              <li style="font-size:13px;color:var(--text-sec)">→ State Consumer Protection Departments</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ ABOUT ════════════════════════════════════════════════════════ -->
+      <div class="page" id="page-about">
+        <div class="section-header">
+          <div>
+            <div class="section-title">About NirikshanX</div>
+            <div class="section-sub">AI-Powered Packaged Commodity Compliance System</div>
+          </div>
+          <span class="badge badge-accent" style="background:var(--accent-dim);color:var(--accent-light)">v1.0.0 — DEMO</span>
+        </div>
+        <div class="card" style="padding:24px;margin-bottom:16px">
+          <p style="font-size:14px;color:var(--text-sec);line-height:1.8;max-width:700px">
+            NirikshanX is an intelligent compliance verification system designed for enforcement officers, inspectors, manufacturers, retailers, and consumers to verify that packaged products comply with India's <strong style="color:var(--text-primary)">Legal Metrology (Packaged Commodities) Rules, 2011</strong>. It uses a demo AI pipeline to extract mandatory declarations, validate them against the rule engine, and generate evidence-backed compliance reports.
+          </p>
+        </div>
+        <div class="about-grid">
+          <div class="about-block">
+            <h4>🔬 Core Features</h4>
+            <ul>
+              <li>AI-powered label image analysis with mock OCR pipeline</li>
+              <li>Configurable rule engine based on LM (PC) Rules 2011</li>
+              <li>3 deterministic demo scenarios (Compliant / Missing / Multi-violation)</li>
+              <li>Confidence scoring with REVIEW_REQUIRED thresholds</li>
+              <li>Field-level evidence per violation</li>
+              <li>PDF compliance report generation</li>
+              <li>Role-Based Access Control (5 roles)</li>
+              <li>Real-time dashboard with live DB statistics</li>
+            </ul>
+          </div>
+          <div class="about-block">
+            <h4>🏗️ Technology Stack</h4>
+            <ul>
+              <li>Backend: FastAPI 0.111 + SQLAlchemy 2.0 (SQLite)</li>
+              <li>Auth: JWT Bearer + bcrypt 5.x password hashing</li>
+              <li>AI: Demo deterministic pipeline (no GPU/model needed)</li>
+              <li>Reports: ReportLab PDF generation</li>
+              <li>Frontend: Vanilla HTML5/CSS3/ES2022</li>
+              <li>Charts: Chart.js 4.4</li>
+              <li>Python: 3.13 (Windows)</li>
+              <li>API Docs: http://localhost:8000/docs</li>
+            </ul>
+          </div>
+          <div class="about-block">
+            <h4>👥 User Roles</h4>
+            <ul>
+              <li>ADMIN — Full system access</li>
+              <li>ENFORCEMENT_OFFICER — View all scans, initiate cases</li>
+              <li>INSPECTOR — Scan products, review findings</li>
+              <li>MANUFACTURER — View own product scans</li>
+              <li>CONSUMER — Submit complaints, view results</li>
+            </ul>
+          </div>
+          <div class="about-block">
+            <h4>🚀 Roadmap</h4>
+            <ul>
+              <li>Real PaddleOCR integration (CRNN + detection)</li>
+              <li>YOLOv11 object detection for label regions</li>
+              <li>Alembic database migrations</li>
+              <li>Case management &amp; audit logs</li>
+              <li>DOCX report export</li>
+              <li>Multi-language OCR (Hindi, Tamil, etc.)</li>
+              <li>Mobile-responsive PWA</li>
+              <li>RESTful audit trail API</li>
+            </ul>
+          </div>
+        </div>
+        <div class="alert-box">
+          <span>⚠️</span>
+          <span>
+            <strong>Legal Disclaimer:</strong> NirikshanX AI findings are indicative and must be reviewed by a qualified Legal Metrology officer before any enforcement action. The system does not constitute a legally binding determination of compliance or non-compliance.
+          </span>
+        </div>
+      </div>
+
+    </div><!-- /page-content -->
+  </div><!-- /main -->
+</div><!-- /app-screen -->
+
+<script>
+/* ══════════════════════════════════════════════════════════ STATE */
+const API = (window.location.protocol && window.location.protocol.startsWith('http')) ? window.location.origin : 'http://localhost:8000';
+let G = {
+  token: localStorage.getItem('nx_token'),
+  user:  JSON.parse(localStorage.getItem('nx_user') || 'null'),
+  scanId: null,
+  scenario: 0,
+  file: null,
+  catChart: null,
+  statusChart: null,
+};
+
+/* ══════════════════════════════════════════════════════════ INIT */
+async function init() {
+  if (G.token && G.user) {
+    try {
+      const u = await api('/auth/me');
+      G.user = u;
+      localStorage.setItem('nx_user', JSON.stringify(u));
+      showApp();
+    } catch(e) {
+      logout();
+    }
+  } else {
+    logout();
+  }
+}
+init();
+
+/* ══════════════════════════════════════════════════════════ AUTH TABS */
+function switchTab(t) {
+  document.getElementById('tab-login-btn').classList.toggle('active', t === 'login');
+  document.getElementById('tab-register-btn').classList.toggle('active', t === 'register');
+  document.getElementById('pane-login').classList.toggle('hidden', t !== 'login');
+  document.getElementById('pane-register').classList.toggle('hidden', t !== 'register');
+}
+
+/* ══════════════════════════════════════════════════════════ LOGIN */
+async function doLogin() {
+  const email = id('l-email').value.trim();
+  const pass  = id('l-pass').value;
+  const btn   = id('login-btn');
+  id('login-err').classList.add('hidden');
+  setLoading(btn, true, 'Signing in...');
+  try {
+    const data = await api('/auth/login', 'POST', {username: email, password: pass});
+    storeAuth(data);
+    showApp();
+  } catch(e) {
+    showErr('login-err', e.message);
+  } finally { setLoading(btn, false, 'Sign In to NirikshanX'); }
+}
+
+/* ══════════════════════════════════════════════════════════ REGISTER */
+async function doRegister() {
+  const name  = id('r-name').value.trim();
+  const email = id('r-email').value.trim();
+  const role  = id('r-role').value;
+  const pass  = id('r-pass').value;
+  const btn   = id('register-btn');
+  id('register-err').classList.add('hidden');
+  setLoading(btn, true, 'Creating account...');
+  try {
+    const data = await api('/auth/register', 'POST', {email, password: pass, full_name: name, role});
+    storeAuth(data);
+    toast('Account created successfully!', 'success');
+    showApp();
+  } catch(e) {
+    showErr('register-err', e.message);
+  } finally { setLoading(btn, false, 'Create Account'); }
+}
+
+function storeAuth(data) {
+  G.token = data.access_token;
+  G.user  = data.user;
+  localStorage.setItem('nx_token', G.token);
+  localStorage.setItem('nx_user', JSON.stringify(G.user));
+}
+
+function showApp() {
+  id('auth-screen').classList.add('hidden');
+  id('app-screen').classList.remove('hidden');
+  const u = G.user;
+  id('user-av').textContent = (u.full_name || u.email || 'U')[0].toUpperCase();
+  id('user-name').textContent = u.full_name || u.email;
+  id('user-role').textContent = (u.role || '').replace(/_/g, ' ');
+  loadDashboard();
+}
+
+function logout() {
+  G.token = null; G.user = null; G.scanId = null;
+  localStorage.removeItem('nx_token');
+  localStorage.removeItem('nx_user');
+  id('app-screen').classList.add('hidden');
+  id('auth-screen').classList.remove('hidden');
+  toast('Signed out', 'info');
+}
+
+/* ══════════════════════════════════════════════════════════ NAVIGATION */
+const pageTitles = {
+  dashboard: ['Dashboard', 'Real-time compliance overview'],
+  scan:      ['Scan Product', 'AI-powered label compliance analysis'],
+  history:   ['Scan History', 'All recorded product scans'],
+  rules:     ['Rule Engine', 'Legal Metrology mandatory declarations'],
+  about:     ['About NirikshanX', 'System information and technology'],
+};
+
+function showPage(name, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  id('page-' + name).classList.add('active');
+  if (btn) btn.classList.add('active');
+  const [title, sub] = pageTitles[name] || [name, ''];
+  id('topbar-title').textContent = title;
+  id('topbar-sub').textContent   = sub;
+  if (name === 'history') loadHistory();
+}
+
+/* ══════════════════════════════════════════════════════════ DASHBOARD */
+async function loadDashboard() {
+  try {
+    const d = await api('/dashboard/stats');
+    id('s-total').textContent     = d.total_scans;
+    id('s-compliant').textContent = d.compliant;
+    id('s-violations').textContent= d.violations;
+    id('s-pending').textContent   = d.pending_review;
+    id('s-high').textContent      = d.high_severity;
+    id('s-rate').textContent      = d.compliance_rate + '%';
+    renderRecentScans(d.recent_scans);
+    renderCharts(d);
+  } catch(e) {
+    toast('Failed to load dashboard: ' + e.message, 'error');
+  }
+}
+
+function renderRecentScans(scans) {
+  const body = id('recent-body');
+  if (!scans || !scans.length) {
+    body.innerHTML = `<div class="empty-state"><div class="empty-icon">📦</div><div class="empty-title">No scans yet</div><div class="empty-desc">Run your first compliance scan to see results here.</div></div>`;
+    return;
+  }
+  body.innerHTML = `<div class="table-wrap"><table>
+    <thead><tr><th>#</th><th>Product</th><th>Category</th><th>Score</th><th>Status</th><th>Date</th><th></th></tr></thead>
+    <tbody>${scans.map(s => `<tr>
+      <td class="td-mono" style="color:var(--text-muted)">${s.id}</td>
+      <td style="font-weight:500">${esc(s.product_name)}</td>
+      <td><span class="badge badge-info">${s.category}</span></td>
+      <td><span style="font-weight:700;color:${scoreColor(s.score)}">${s.score !== null ? s.score + '%' : '—'}</span></td>
+      <td>${statusBadge(s.status)}</td>
+      <td style="color:var(--text-sec);font-size:12px">${fmtDate(s.created_at)}</td>
+      <td><button class="btn btn-sm btn-ghost" onclick="viewScan(${s.id})">View →</button></td>
+    </tr>`).join('')}</tbody>
+  </table></div>`;
+}
+
+function renderCharts(d) {
+  const catCtx    = id('chart-category').getContext('2d');
+  const statusCtx = id('chart-status').getContext('2d');
+  const chartDefaults = {
+    plugins: { legend: { labels: { color: '#94a3b8', font: { family: 'Inter', size: 11 }, boxWidth: 12 } } },
+    maintainAspectRatio: false,
+  };
+
+  if (G.catChart) G.catChart.destroy();
+  if (G.statusChart) G.statusChart.destroy();
+
+  const cats = d.by_category || [];
+  G.catChart = new Chart(catCtx, {
+    type: 'bar',
+    data: {
+      labels: cats.map(c => c.category),
+      datasets: [{
+        label: 'Scans',
+        data: cats.map(c => c.count),
+        backgroundColor: ['#4f6ef7','#10b981','#f59e0b','#ef4444','#a855f7'],
+        borderRadius: 6,
+      }],
+    },
+    options: { ...chartDefaults,
+      scales: {
+        x: { ticks: { color: '#475569', font: { family: 'Inter', size: 10 } }, grid: { color: 'rgba(255,255,255,.04)' } },
+        y: { ticks: { color: '#475569', font: { family: 'Inter', size: 10 }, stepSize: 1 }, grid: { color: 'rgba(255,255,255,.04)' } },
+      },
+      plugins: { ...chartDefaults.plugins, legend: { display: false } },
+    },
+  });
+
+  const total = d.total_scans || 1;
+  G.statusChart = new Chart(statusCtx, {
+    type: 'doughnut',
+    data: {
+      labels: ['Compliant', 'Violations', 'Pending Review'],
+      datasets: [{
+        data: [d.compliant, Math.max(d.total_scans - d.compliant - d.pending_review, 0), d.pending_review],
+        backgroundColor: ['#10b981', '#ef4444', '#eab308'],
+        borderWidth: 0,
+        hoverOffset: 4,
+      }],
+    },
+    options: { ...chartDefaults,
+      cutout: '68%',
+      plugins: {
+        legend: { position: 'bottom', labels: { color: '#94a3b8', font: { family: 'Inter', size: 11 }, boxWidth: 10, padding: 12 } },
+      },
+    },
+  });
+}
+
+/* ══════════════════════════════════════════════════════════ SCAN */
+function pickScenario(n) {
+  G.scenario = n;
+  [0,1,2].forEach(i => id('sc'+i).classList.toggle('active', i === n));
+}
+
+function previewImg(e) {
+  G.file = e.target.files[0];
+  if (!G.file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const img = id('img-preview');
+    img.src = ev.target.result;
+    img.style.display = 'block';
+  };
+  reader.readAsDataURL(G.file);
+}
+
+function handleDrop(e) {
+  e.preventDefault();
+  id('upload-zone').classList.remove('drag');
+  const f = e.dataTransfer.files[0];
+  if (f && f.type.startsWith('image/')) {
+    G.file = f;
+    const r = new FileReader();
+    r.onload = ev => { const img = id('img-preview'); img.src = ev.target.result; img.style.display = 'block'; };
+    r.readAsDataURL(f);
+  }
+}
+
+async function submitScan() {
+  const name = id('scan-name').value.trim();
+  if (!name) { toast('Please enter a product name', 'error'); return; }
+  const cat = id('scan-cat').value;
+  const fd = new FormData();
+  fd.append('product_name', name);
+  fd.append('category', cat);
+  fd.append('scenario', G.scenario);
+  if (G.file) fd.append('image', G.file);
+
+  id('scan-form-wrap').classList.add('hidden');
+  id('scan-results').classList.add('hidden');
+  id('scan-processing').classList.remove('hidden');
+
+  const steps = ['step0','step1','step2','step3','step4','step5'];
+  const labels = ['Preprocessing image','Running OCR engine','Extracting declarations','Applying rule engine','Computing compliance score','Generating evidence report'];
+  let si = 0, pct = 4;
+  const stepTimer = setInterval(() => {
+    if (si > 0) id(steps[si-1]).classList.remove('active'), id(steps[si-1]).classList.add('done');
+    if (si < steps.length) {
+      id(steps[si]).classList.add('active');
+      id('proc-title').textContent = labels[si];
+      pct = Math.min(pct + 14, 88);
+      id('proc-bar').style.width = pct + '%';
+      si++;
+    }
+  }, 700);
+
+  try {
+    const scan = await apiForm('/scans/submit', fd);
+    G.scanId = scan.id;
+    for (let i = 0; i < 20; i++) {
+      await sleep(900);
+      const r = await api('/scans/' + scan.id);
+      if (['COMPLETED','REVIEW_REQUIRED','FAILED'].includes(r.status)) {
+        clearInterval(stepTimer);
+        steps.forEach(s => id(s).classList.remove('active'));
+        id('proc-bar').style.width = '100%';
+        await sleep(300);
+        id('scan-processing').classList.add('hidden');
+        id('scan-form-wrap').classList.remove('hidden');
+        if (r.status === 'FAILED') {
+          toast('Scan processing failed', 'error');
+        } else {
+          showResults(r);
+        }
+        return;
+      }
+    }
+    throw new Error('Scan timed out');
+  } catch(e) {
+    clearInterval(stepTimer);
+    id('scan-processing').classList.add('hidden');
+    id('scan-form-wrap').classList.remove('hidden');
+    toast('Scan failed: ' + e.message, 'error');
+  }
+}
+
+function showResults(data) {
+  id('scan-results').classList.remove('hidden');
+  G.scanId = data.id;
+  const score = data.compliance_score !== null && data.compliance_score !== undefined ? data.compliance_score : 'N/A';
+  id('res-subtitle').textContent = 'Scan #' + data.id + ' — ' + data.product_name;
+  id('res-product').textContent  = data.product_name + ' · ' + data.category;
+  id('m-cat').textContent = data.category;
+  id('m-id').textContent  = '#' + data.id;
+
+  // Score ring
+  id('score-num').textContent = typeof score === 'number' ? score : '—';
+  id('score-num').style.color = scoreColor(typeof score === 'number' ? score : null);
+  const arc = id('score-arc');
+  const circ = 345.4;
+  const numScore = typeof score === 'number' ? score : 0;
+  arc.style.strokeDashoffset = circ - (circ * numScore / 100);
+  arc.style.stroke = scoreColor(typeof score === 'number' ? score : null);
+
+  id('overall-badge').innerHTML = statusBadge(data.overall_status);
+
+  // Alert Banner for Special Statuses
+  const statusBanner = id('status-alert-banner');
+  const st = norm(data.overall_status);
+  
+  if (st === 'NOT_A_PRODUCT') {
+    statusBanner.className = 'card';
+    statusBanner.style.background = 'rgba(239,68,68,0.12)';
+    statusBanner.style.border = '1px solid rgba(239,68,68,0.35)';
+    statusBanner.style.padding = '16px';
+    statusBanner.innerHTML = `
+      <div style="display:flex;align-items:flex-start;gap:12px">
+        <div style="font-size:28px">🚫</div>
+        <div>
+          <h3 style="font-size:15px;font-weight:700;color:var(--red);margin-bottom:4px">NOT A RECOGNIZABLE PRODUCT</h3>
+          <p style="font-size:13px;color:var(--text-primary)">No packaged commodity or product label could be detected in this image. The system distinguishes between genuine product packages and unrelated images (people, animals, landscapes, blank images, or random documents).</p>
+          <div style="margin-top:8px;font-size:12px;font-weight:600;color:var(--accent-light)">💡 Suggested Action: Please upload a clear photo showing the product packaging or mandatory label declarations.</div>
+        </div>
+      </div>
+    `;
+    statusBanner.classList.remove('hidden');
+  } else if (st === 'IMAGE_QUALITY_INSUFFICIENT') {
+    statusBanner.className = 'card';
+    statusBanner.style.background = 'rgba(245,158,11,0.12)';
+    statusBanner.style.border = '1px solid rgba(245,158,11,0.35)';
+    statusBanner.style.padding = '16px';
+    statusBanner.innerHTML = `
+      <div style="display:flex;align-items:flex-start;gap:12px">
+        <div style="font-size:28px">⚠️</div>
+        <div>
+          <h3 style="font-size:15px;font-weight:700;color:var(--orange);margin-bottom:4px">IMAGE QUALITY INSUFFICIENT</h3>
+          <p style="font-size:13px;color:var(--text-primary)">The uploaded image quality (resolution, lighting, or blur level) is insufficient for reliable compliance inspection.</p>
+          <div style="margin-top:8px;font-size:12px;font-weight:600;color:var(--accent-light)">💡 Suggested Action: Hold camera steady, ensure bright lighting, and upload a clear photo of the product label.</div>
+        </div>
+      </div>
+    `;
+    statusBanner.classList.remove('hidden');
+  } else if (st === 'REVIEW_REQUIRED' || st === 'NEEDS_REVIEW') {
+    statusBanner.className = 'card';
+    statusBanner.style.background = 'rgba(234,179,8,0.12)';
+    statusBanner.style.border = '1px solid rgba(234,179,8,0.35)';
+    statusBanner.style.padding = '16px';
+    statusBanner.innerHTML = `
+      <div style="display:flex;align-items:flex-start;gap:12px">
+        <div style="font-size:28px">👁️</div>
+        <div>
+          <h3 style="font-size:15px;font-weight:700;color:var(--yellow);margin-bottom:4px">NEEDS HUMAN INSPECTOR REVIEW</h3>
+          <p style="font-size:13px;color:var(--text-primary)">The system could not obtain sufficient evidence or confidence to make an automated compliance decision.</p>
+          <div style="margin-top:8px;font-size:12px;font-weight:600;color:var(--accent-light)">💡 Note: Entered human-in-the-loop inspection workflow.</div>
+        </div>
+      </div>
+    `;
+    statusBanner.classList.remove('hidden');
+  } else {
+    statusBanner.classList.add('hidden');
+  }
+
+  // AI Pipeline Telemetry Panel
+  const metrics = data.ai_debug_metrics || {};
+  const debugGrid = id('ai-debug-grid');
+  if (debugGrid) {
+    const q = Math.round((metrics.quality_score || 0) * 100);
+    const p = Math.round((metrics.product_confidence || 0) * 100);
+    const l = Math.round((metrics.label_confidence || 0) * 100);
+    const o = Math.round((metrics.ocr_confidence || 0) * 100);
+    const e = Math.round((metrics.extraction_confidence || 0) * 100);
+    const i = Math.round((metrics.inspection_confidence || 0) * 100);
+
+    debugGrid.innerHTML = `
+      <div style="padding:10px;background:var(--bg-elevated);border-radius:var(--radius);font-size:12px">
+        <div style="color:var(--text-sec);margin-bottom:2px">1. Image Quality</div>
+        <div style="font-weight:700;color:${q >= 50 ? 'var(--green)' : 'var(--red)'}">${q}% (${q >= 50 ? 'PASS' : 'FAIL'})</div>
+      </div>
+      <div style="padding:10px;background:var(--bg-elevated);border-radius:var(--radius);font-size:12px">
+        <div style="color:var(--text-sec);margin-bottom:2px">2. Product Detection</div>
+        <div style="font-weight:700;color:${p >= 60 ? 'var(--green)' : 'var(--red)'}">${p}% (${p >= 60 ? 'PASS' : 'FAIL'})</div>
+      </div>
+      <div style="padding:10px;background:var(--bg-elevated);border-radius:var(--radius);font-size:12px">
+        <div style="color:var(--text-sec);margin-bottom:2px">3. Label Region</div>
+        <div style="font-weight:700;color:var(--accent-light)">${l}%</div>
+      </div>
+      <div style="padding:10px;background:var(--bg-elevated);border-radius:var(--radius);font-size:12px">
+        <div style="color:var(--text-sec);margin-bottom:2px">4. OCR Text Engine</div>
+        <div style="font-weight:700;color:var(--accent-light)">${o}%</div>
+      </div>
+      <div style="padding:10px;background:var(--bg-elevated);border-radius:var(--radius);font-size:12px">
+        <div style="color:var(--text-sec);margin-bottom:2px">5. Field Extraction</div>
+        <div style="font-weight:700;color:var(--accent-light)">${e}% (${metrics.evidence_found || 0} fields)</div>
+      </div>
+      <div style="padding:10px;background:var(--bg-elevated);border-radius:var(--radius);font-size:12px">
+        <div style="color:var(--text-sec);margin-bottom:2px">6. Overall Confidence</div>
+        <div style="font-weight:700;color:${i >= 60 ? 'var(--green)' : 'var(--orange)'}">${i}%</div>
+      </div>
+    `;
+  }
+
+  // Metrics
+  const vs = data.violations || [];
+  id('m-fail').textContent = vs.filter(v => norm(v.status) === 'FAIL').length;
+  id('m-warn').textContent = vs.filter(v => norm(v.status) === 'WARNING').length;
+  id('m-rev').textContent  = vs.filter(v => norm(v.status) === 'REVIEW_REQUIRED').length;
+  id('m-pass').textContent = (data.declarations || []).length - vs.length;
+  id('m-decl').textContent = (data.declarations || []).length + ' fields';
+
+  // Violations
+  const vl = id('violations-list');
+  if (st === 'NOT_A_PRODUCT') {
+    vl.innerHTML = `<div class="violation-item v-fail" style="border-left-color:var(--red)">
+      <div class="violation-row">${statusBadge('NOT_A_PRODUCT')}<span style="font-weight:600">Product Packaging Not Detected</span></div>
+      <p class="violation-msg">No packaged commodity or product label could be detected. Compliance rules cannot be evaluated on an unrelated image.</p>
+    </div>`;
+  } else if (st === 'IMAGE_QUALITY_INSUFFICIENT') {
+    vl.innerHTML = `<div class="violation-item v-warn" style="border-left-color:var(--orange)">
+      <div class="violation-row">${statusBadge('IMAGE_QUALITY_INSUFFICIENT')}<span style="font-weight:600">Image Quality Insufficient</span></div>
+      <p class="violation-msg">Image quality is too low (blank, dark, overexposed, blurry, or low resolution) to perform reliable inspection.</p>
+    </div>`;
+  } else if (!vs.length) {
+    vl.innerHTML = `<div class="violation-item v-pass" style="border-left-color:var(--green)">
+      <div class="violation-row">${statusBadge('PASS')}<span style="font-weight:600">All Compliance Checks Passed</span></div>
+      <p class="violation-msg">No violations found. This product appears to comply with all mandatory declaration requirements under LM (PC) Rules, 2011.</p>
+    </div>`;
+  } else {
+    vl.innerHTML = vs.map(v => {
+      const st  = norm(v.status);
+      const sev = norm(v.severity);
+      const cls = st === 'FAIL' ? 'v-fail' : st === 'WARNING' ? 'v-warn' : st === 'REVIEW_REQUIRED' ? 'v-review' : 'v-pass';
+      const conf = v.confidence ?? 1;
+      const cc   = conf >= .8 ? 'conf-high' : conf >= .5 ? 'conf-med' : 'conf-low';
+      return `<div class="violation-item ${cls}">
+        <div class="violation-row">
+          ${statusBadge(st)}
+          <span class="badge badge-${sev.toLowerCase()}">${sev}</span>
+          <span style="font-weight:600;font-size:13px">${esc(v.field.replace(/_/g,' '))}</span>
+          <code style="font-family:'JetBrains Mono',monospace;font-size:10px;background:var(--bg-elevated);padding:2px 6px;border-radius:4px;color:var(--accent-light);margin-left:auto">${v.rule_id || ''}</code>
+        </div>
+        <p class="violation-msg">${esc(v.message)}</p>
+        <div class="violation-meta">
+          <span>AI Confidence:</span>
+          <div class="conf-bar-wrap">
+            <div class="conf-bar"><div class="conf-fill ${cc}" style="width:${Math.round(conf*100)}%"></div></div>
+            <span>${Math.round(conf*100)}%</span>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  // Declarations
+  const dg = id('decl-grid');
+  dg.innerHTML = (data.declarations || []).map(d => {
+    const c = d.confidence || 0;
+    const cc = c >= .8 ? 'conf-high' : c >= .5 ? 'conf-med' : 'conf-low';
+    const present = d.is_present && d.value;
+    const viol = vs.find(v => v.field === d.field);
+    const borderColor = !present ? 'var(--red)' : viol ? 'var(--orange)' : 'rgba(16,185,129,.2)';
+    return `<div class="decl-card" style="border-color:${borderColor}">
+      <div class="decl-field">${(d.field||'').replace(/_/g,' ')}</div>
+      <div class="decl-value ${!present ? 'missing' : ''}">${esc(d.value || 'NOT FOUND')}</div>
+      <div class="decl-footer">
+        <div class="conf-bar" style="flex:1"><div class="conf-fill ${cc}" style="width:${Math.round(c*100)}%"></div></div>
+        <span style="font-size:10px;color:var(--text-muted)">${Math.round(c*100)}%</span>
+        ${present ? '<span style="font-size:10px;color:var(--green)">✓</span>' : '<span style="font-size:10px;color:var(--red)">✗</span>'}
+      </div>
+    </div>`;
+  }).join('');
+
+  toast('Scan complete!', 'info');
+  id('scan-results').scrollIntoView({ behavior: 'smooth' });
+}
+
+function resetScan() {
+  id('scan-results').classList.add('hidden');
+  id('scan-form-wrap').classList.remove('hidden');
+  id('scan-name').value = '';
+  const img = id('img-preview');
+  img.src = ''; img.style.display = 'none';
+  G.file = null;
+}
+
+async function viewScan(sid) {
+  showPage('scan', id('nav-scan'));
+  id('scan-form-wrap').classList.remove('hidden');
+  id('scan-results').classList.add('hidden');
+  id('scan-processing').classList.add('hidden');
+  try {
+    const r = await api('/scans/' + sid);
+    G.scanId = sid;
+    showResults(r);
+    id('scan-form-wrap').classList.add('hidden');
+  } catch(e) { toast('Failed to load scan', 'error'); }
+}
+
+async function downloadPDF() {
+  if (!G.scanId) return;
+  toast('Generating PDF report...', 'info');
+  try {
+    const res = await fetch(API + '/reports/' + G.scanId + '/pdf', { headers: authH() });
+    if (!res.ok) throw new Error('Server error');
+    const blob = await res.blob();
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href = url; a.download = 'NirikshanX-Report-' + G.scanId + '.pdf'; a.click();
+    URL.revokeObjectURL(url);
+    toast('PDF downloaded!', 'success');
+  } catch(e) { toast('PDF failed: ' + e.message, 'error'); }
+}
+
+/* ══════════════════════════════════════════════════════════ HISTORY */
+async function loadHistory() {
+  const body = id('history-body');
+  body.innerHTML = `<div class="empty-state"><div class="empty-icon" style="font-size:32px;animation:spin 1s linear infinite">↻</div><div class="empty-desc">Loading...</div></div>`;
+  try {
+    const scans = await api('/scans/');
+    if (!scans.length) {
+      body.innerHTML = `<div class="empty-state"><div class="empty-icon">📋</div><div class="empty-title">No scans yet</div><div class="empty-desc">Run your first compliance scan to see it here.</div></div>`;
+      return;
+    }
+    body.innerHTML = `<div class="table-wrap"><table>
+      <thead><tr><th>#</th><th>Product</th><th>Category</th><th>Score</th><th>Status</th><th>Date</th><th></th></tr></thead>
+      <tbody>${scans.map(s => `<tr>
+        <td class="td-mono" style="color:var(--text-muted)">${s.id}</td>
+        <td style="font-weight:500">${esc(s.product_name)}</td>
+        <td><span class="badge badge-info">${s.category}</span></td>
+        <td><strong style="color:${scoreColor(s.compliance_score)}">${s.compliance_score !== null ? s.compliance_score + '%' : '—'}</strong></td>
+        <td>${statusBadge(s.overall_status)}</td>
+        <td style="color:var(--text-sec);font-size:12px">${fmtDate(s.created_at)}</td>
+        <td><button class="btn btn-sm btn-ghost" onclick="viewScan(${s.id})">View →</button></td>
+      </tr>`).join('')}</tbody>
+    </table></div>`;
+  } catch(e) {
+    body.innerHTML = `<div class="empty-state"><div class="empty-icon">❌</div><div class="empty-title">Failed to load</div><div class="empty-desc">Is the backend running on port 8000?</div></div>`;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════ HELPERS */
+function id(x) { return document.getElementById(x); }
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+function esc(s) { return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function authH() { return { Authorization: 'Bearer ' + G.token }; }
+
+async function api(path, method, body) {
+  const opts = { method: method || 'GET', headers: { ...authH(), 'Content-Type': 'application/json' } };
+  if (body) opts.body = JSON.stringify(body);
+  const res = await fetch(API + path, opts);
+  const data = await res.json();
+  if (res.status === 401) {
+    logout();
+    throw new Error('Session expired. Please sign in again.');
+  }
+  if (!res.ok) throw new Error(data.detail || 'Request failed');
+  return data;
+}
+
+async function apiForm(path, formData) {
+  const res = await fetch(API + path, { method: 'POST', headers: authH(), body: formData });
+  const data = await res.json();
+  if (res.status === 401) {
+    logout();
+    throw new Error('Session expired. Please sign in again.');
+  }
+  if (!res.ok) throw new Error(data.detail || 'Request failed');
+  return data;
+}
+
+function norm(s) { return String(s || '').replace(/ViolationStatus\.|ScanStatus\.|ViolationSeverity\./g, ''); }
+
+function statusBadge(s) {
+  const n = norm(s);
+  const M = {
+    PASS:                       ['badge-pass',    '✓ COMPLIANT'],
+    COMPLIANT:                  ['badge-pass',    '✓ COMPLIANT'],
+    FAIL:                       ['badge-fail',    '✗ NON-COMPLIANT'],
+    NON_COMPLIANT:              ['badge-fail',    '✗ NON-COMPLIANT'],
+    WARNING:                    ['badge-warn',    '⚠ WARNING'],
+    REVIEW_REQUIRED:            ['badge-review',  '👁 NEEDS HUMAN REVIEW'],
+    NEEDS_REVIEW:               ['badge-review',  '👁 NEEDS HUMAN REVIEW'],
+    NOT_A_PRODUCT:              ['badge-fail',    '🚫 NOT A PRODUCT'],
+    IMAGE_QUALITY_INSUFFICIENT: ['badge-warn',    '⚠️ LOW IMAGE QUALITY'],
+    PENDING:                    ['badge-pending', '⏳ PENDING'],
+    PROCESSING:                 ['badge-pending', '⚙ PROCESSING'],
+    COMPLETED:                  ['badge-pass',    '✓ COMPLETE'],
+    FAILED:                     ['badge-fail',    '✗ FAILED'],
+  };
+  const [cls, label] = M[n] || ['badge-pending', n];
+  return `<span class="badge ${cls}">${label}</span>`;
+}
+
+function scoreColor(s) {
+  if (s === null || s === undefined) return 'var(--text-sec)';
+  return s >= 90 ? 'var(--green)' : s >= 60 ? 'var(--orange)' : 'var(--red)';
+}
+
+function fmtDate(dt) {
+  if (!dt) return '—';
+  return new Date(dt).toLocaleString('en-IN', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' });
+}
+
+function showErr(el, msg) {
+  const e = id(el); e.textContent = msg; e.classList.remove('hidden');
+}
+
+function setLoading(btn, loading, label) {
+  btn.disabled = loading;
+  btn.innerHTML = loading ? `<span class="spin-sm"></span> ${label}` : label;
+}
+
+/* ══════════════════════════════════════════════════════════ TOAST */
+function toast(msg, type) {
+  const icons = { success:'✅', error:'❌', info:'ℹ️', warn:'⚠️' };
+  const el = document.createElement('div');
+  el.className = 'toast t-' + (type || 'info');
+  el.innerHTML = `<span>${icons[type] || 'ℹ️'}</span><span>${esc(msg)}</span>`;
+  id('toast-root').appendChild(el);
+  setTimeout(() => el.remove(), 4500);
+}
+
+/* ══════════════════════════════════════════════════════════ KEYBOARD */
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Enter') return;
+  if (!id('auth-screen').classList.contains('hidden')) {
+    if (!id('pane-login').classList.contains('hidden')) doLogin();
+    else doRegister();
+  }
+});
+</script>
+</body>
+</html>
